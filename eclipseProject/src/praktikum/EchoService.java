@@ -15,21 +15,22 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.net.*;
+import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-public class EchoService extends Thread{
-    Socket client;
-    HouseServer houseServer;
-    EchoService(Socket client, HouseServer home){
-    	this.client = client;
-    	this.houseServer = home;}
 
-  @Override
+public class EchoService extends Thread {
+	Socket client;
+	HouseServer houseServer;
+
+	EchoService(Socket client, HouseServer home) {
+		this.client = client;
+		this.houseServer = home;
+	}
+
+	@Override
 	public void run() {
 		String line;
 		BufferedReader fromClient;
@@ -39,16 +40,19 @@ public class EchoService extends Thread{
 		try {
 			fromClient = new BufferedReader // Datastream FROM Client
 			(new InputStreamReader(client.getInputStream()));
-			toClient = new DataOutputStream(client.getOutputStream()); // TO Client
+			toClient = new DataOutputStream(client.getOutputStream()); // TO
+																		// Client
 			while (verbunden) { // repeat as long as connection exists
 				line = ".";
-				while (!line.equals("")) { // read & ignore HTTP Requests until empty line
+				while (!line.equals("")) { // read & ignore HTTP Requests until
+											// empty line
 					line = fromClient.readLine();
 					System.out.println("Received: " + line);
 				}
 				toClient.writeBytes("HTTP/1.1 200 OK\n");
 				System.out.println("Sent: HTTP/1.1 200 OK");
-				DateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz"); // Date
+				DateFormat df = new SimpleDateFormat(
+						"EEE, dd MMM yyyy HH:mm:ss zzz"); // Date
 				Date date = Calendar.getInstance().getTime();
 				String reportDate = df.format(date);
 				toClient.writeBytes(reportDate + "\n");
@@ -75,11 +79,12 @@ public class EchoService extends Thread{
 			System.out.println(e);
 		}
 	}
-  
+
 	// read Htmlfile
 	private String createHtmlBody() throws Exception {
 		String result = new String();
-		BufferedReader htmlFile = new BufferedReader(new FileReader(new File("praktikum/index.html")));
+		BufferedReader htmlFile = new BufferedReader(new FileReader(new File(
+				"praktikum/index.html")));
 		String htmlLine;
 		while ((htmlLine = htmlFile.readLine()) != null) {
 			htmlLine = htmlLine.trim();
