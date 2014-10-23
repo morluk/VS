@@ -83,10 +83,13 @@ public class EchoService extends Thread {
 	// read Htmlfile
 	private String createHtmlBody() throws Exception {
 		String result = new String();
-		BufferedReader htmlFile = new BufferedReader(new FileReader(new File(
-				"praktikum/index.html")));
+		File htmlFile = new File("resource/index.html");
+		if (!htmlFile.exists()) {
+			htmlFile = new File("../resource/index.html");
+		}
+		BufferedReader htmlReader = new BufferedReader(new FileReader(htmlFile));
 		String htmlLine;
-		while ((htmlLine = htmlFile.readLine()) != null) {
+		while ((htmlLine = htmlReader.readLine()) != null) {
 			htmlLine = htmlLine.trim();
 			if (htmlLine.contains("placeholder_Article")) {
 				for (int i = 0; i < houseServer.getRoomCount(); i++) {
@@ -106,7 +109,7 @@ public class EchoService extends Thread {
 				result += htmlLine;
 			}
 		}
-		htmlFile.close();
+		htmlReader.close();
 		return result;
 	}
 }
