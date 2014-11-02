@@ -7,10 +7,9 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Calendar;
-import java.util.Random;
 
-public class Sensor {
-	private static final String HOUSESERVER_ADRESS = "10.5.23.180";
+public class Sensor extends Thread {
+	private static final String HOUSESERVER_ADRESS = "localhost";
 	private static final int PORT = 9998;
 	// milliseconds
 	private static final int INTERVAL = 500;
@@ -20,18 +19,25 @@ public class Sensor {
 	private DatagramSocket socket;
 
 	private Calendar currentTime;
+	
+	private RandValue randValue = null;
+	private String name;
 
-	public Sensor() {
+	public Sensor(String name) {
+		this.name = name;
 		currentTime = getDate();
+		randValue = RandValue.getInstance();
 		try {
-			socket = new DatagramSocket(PORT);
+			socket = new DatagramSocket();
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		start();
 	}
 
-	public void startSimulation() {
-		while (true) {
+	@Override
+	public void run() {
+		while (true) {		//repeat forever
 			try {
 				setRandomNo();
 				sendData();
@@ -55,22 +61,15 @@ public class Sensor {
 		}
 	}
 
+	/**
+	 * Format Payload: name#power&temp#
+	 */
 	public void setRandomNo() {
-		Random generator = new Random();
-		String data = "";
+		String data = name;
 		data += "#";
-		data += String.valueOf(generator.nextInt(10));
+		data += String.valueOf(randValue.getRandomPower());
 		data += "&";
-		double decission = generator.nextDouble();
-		if (decission <= 0.8) {
-			data += String.valueOf(generator.nextInt(16) + 10);
-		} else {
-			int month = currentTime.get(Calendar.MONTH);
-			double factor = (double) (2.0 * 3.1415926535897932 * (month / 11.0));
-			double m = -1.0 * Math.cos(factor * 3.1415926535897932 / 180);
-			int temp = (int) (generator.nextInt(25) * m);
-			data += String.valueOf(temp);
-		}
+		data += String.valueOf(randValue.getRandomTemp(getDate().get(Calendar.MONTH)));
 		data += "#";
 		this.data = data.getBytes();
 
@@ -91,8 +90,21 @@ public class Sensor {
 		return cal;
 	}
 
-	public static void main(String[] args) {
-		Sensor sensor = new Sensor();
-		sensor.startSimulation();
+	/**
+	 * 
+	 * @param args -room int sets No of rooms, Default: 3
+	 * @throws IOException 
+	 */
+	public static void main(String[] args) throws IOException {
+		int rooms = 3;
+		if (args.length == 2) {
+			if (args[0].equals("-room")) {
+				rooms = Integer.parseInt(args[1]);
+			}
+		}
+		for (int i=0; i<rooms; i++) {
+			Integer name = new Integer(i);
+			new Sensor(name.toString());
+		}
 	}
 }
