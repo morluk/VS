@@ -1,4 +1,4 @@
-package praktikum;
+package praktikum.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -30,7 +30,6 @@ public class MultithreadedTCPServer extends Thread {
 				Socket client = listenSocket.accept();
 				System.out.println("Connection with: " + // Output connection
 						client.getRemoteSocketAddress()); // (Client) address
-				houseServer.setRandomNo();
 				new EchoService(client, houseServer).start();
 			}
 		} catch (Exception e) {

@@ -1,4 +1,4 @@
-package praktikum;
+package praktikum.server;
 
 // 22.10. 10
 
