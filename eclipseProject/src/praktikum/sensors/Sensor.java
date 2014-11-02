@@ -12,8 +12,8 @@ import java.util.Random;
 public class Sensor {
 	private static final String HOUSESERVER_ADRESS = "10.5.23.180";
 	private static final int PORT = 9998;
-	private static final int INTERVAL = 1;
-	private static final int BUFFER_SIZE = 1024;
+	// milliseconds
+	private static final int INTERVAL = 500;
 
 	private byte data[];
 
@@ -22,7 +22,6 @@ public class Sensor {
 	private Calendar currentTime;
 
 	public Sensor() {
-		data = new byte[BUFFER_SIZE];
 		currentTime = getDate();
 		try {
 			socket = new DatagramSocket(PORT);
@@ -37,7 +36,7 @@ public class Sensor {
 				setRandomNo();
 				sendData();
 				System.out.println("sent:'" + (new String(data)) + "'");
-				Thread.sleep(1000 * INTERVAL);
+				Thread.sleep(INTERVAL);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -58,7 +57,9 @@ public class Sensor {
 
 	public void setRandomNo() {
 		Random generator = new Random();
-		String data = String.valueOf(generator.nextInt(10));
+		String data = "";
+		data += "#";
+		data += String.valueOf(generator.nextInt(10));
 		data += "&";
 		double decission = generator.nextDouble();
 		if (decission <= 0.8) {
@@ -70,6 +71,7 @@ public class Sensor {
 			int temp = (int) (generator.nextInt(25) * m);
 			data += String.valueOf(temp);
 		}
+		data += "#";
 		this.data = data.getBytes();
 
 		currentTime.add(Calendar.SECOND, 1);
