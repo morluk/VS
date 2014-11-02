@@ -11,6 +11,8 @@ public class UDPServer {
 	private static final int BUFFER_SIZE = 1024;
 
 	private List<Room> rooms;
+	
+	private byte data[];
 
 	private boolean running;
 
@@ -25,7 +27,6 @@ public class UDPServer {
 	}
 
 	public void startListening() {
-		byte data[] = new byte[BUFFER_SIZE];
 		String stringData;
 		DatagramSocket socket;
 		DatagramPacket packet;
@@ -43,11 +44,13 @@ public class UDPServer {
 		try {
 			socket = new DatagramSocket(PORT);
 			while (running) {
+				clearData();
 				packet = new DatagramPacket(data, data.length);
 				socket.receive(packet);
 				address = packet.getAddress().toString();
 				room = getRoom(address);
-				stringData =  new String(data);
+				System.out.println("data:'" + new String(data) + "'");
+				stringData = new String(data).split("#")[1];
 				power = Integer.valueOf(stringData.split("&")[0]);
 				temp = Integer.valueOf(stringData.split("&")[1]);
 				room.setPower(power);
@@ -60,7 +63,7 @@ public class UDPServer {
 		}
 	}
 
-	public Room getRoom(String address) {
+	private Room getRoom(String address) {
 		for (Room room : this.rooms) {
 			if (room.getAddress().equals(address)) {
 				return room;
@@ -69,6 +72,9 @@ public class UDPServer {
 		Room room = new Room("KA", address);
 		rooms.add(room);
 		return room;
-
+	}
+	
+	private void clearData() {
+		data = new byte[BUFFER_SIZE];
 	}
 }

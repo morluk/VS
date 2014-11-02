@@ -97,6 +97,9 @@ public class EchoService extends Thread {
 					result += "<article>";
 					result += "<h2>" + currentRoom.getName() + "</h2>";
 					result += "<table>";
+					result += "<tr><td>Address</td><td></td><td>"
+							+ currentRoom.getAddress()
+							+ "</td></tr>";
 					result += "<tr><td>Room Temperature</td><td></td><td>"
 							+ currentRoom.getTemperature()
 							+ " Degree Celsius</td></tr>";
