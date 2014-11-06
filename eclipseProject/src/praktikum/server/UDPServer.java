@@ -33,6 +33,8 @@ public class UDPServer extends Thread {
 	private int receivedCounter = 0;
 
 	private int delaySum = 0;
+	
+	private int delaySumOld = 0;
 
 	public UDPServer(List<Room> rooms) {
 		this.rooms = rooms;
@@ -44,8 +46,8 @@ public class UDPServer extends Thread {
 				System.out.println("Packets per Second received: "
 						+ receivedCounter);
 				System.out.println("Average Delay per Second: "
-						+ (receivedCounter > 0 ? delaySum / receivedCounter
-								: delaySum));
+						+ (receivedCounter > 0 ? delaySumOld / receivedCounter
+								: delaySumOld));
 			}
 		}, 0, 1000);
 		start();
@@ -54,6 +56,8 @@ public class UDPServer extends Thread {
 	public void resetCounter() {
 		receivedCounter = received;
 		received = 0;
+		delaySumOld = delaySum;
+		delaySum = 0;
 	}
 
 	public void stopListening() {
