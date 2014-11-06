@@ -12,7 +12,7 @@ public class Sensor extends Thread {
 	private static final String HOUSESERVER_ADRESS = "localhost";
 	private static final int PORT = 9998;
 	// milliseconds
-	private static final int INTERVAL = 1;
+	private static final int INTERVAL = 0;
 
 	private byte data[];
 

@@ -10,8 +10,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * running erlaubt nur 1 Thread
- * Thread sinnvoll weil sonst HouseServer nicht weiter läuft.
+ * running erlaubt nur 1 Thread Thread sinnvoll weil sonst HouseServer nicht
+ * weiter läuft.
+ * 
  * @author moritz
  *
  */
@@ -20,14 +21,18 @@ public class UDPServer extends Thread {
 	private static final int BUFFER_SIZE = 1024;
 
 	private List<Room> rooms;
-	
+
 	private byte data[];
 
 	private boolean running;
-	
+
 	private Timer timer = new Timer();
+
 	private int received = 0;
+
 	private int receivedCounter = 0;
+
+	private int delaySum = 0;
 
 	public UDPServer(List<Room> rooms) {
 		this.rooms = rooms;
@@ -36,12 +41,16 @@ public class UDPServer extends Thread {
 			@Override
 			public void run() {
 				resetCounter();
-				System.out.println("Packets per Second received: " + receivedCounter);
+				System.out.println("Packets per Second received: "
+						+ receivedCounter);
+				System.out.println("Average Delay per Second: "
+						+ (receivedCounter > 0 ? delaySum / receivedCounter
+								: delaySum));
 			}
 		}, 0, 1000);
 		start();
 	}
-	
+
 	public void resetCounter() {
 		receivedCounter = received;
 		received = 0;
@@ -60,7 +69,6 @@ public class UDPServer extends Thread {
 		Room room;
 		int power;
 		int temp;
-		long delay;
 
 		if (running) {
 			System.out.println("Allready running");
@@ -78,12 +86,12 @@ public class UDPServer extends Thread {
 				address = packet.getAddress().toString();
 				name = new String(data).split("#")[0];
 				room = getRoom(name, address);
-//				System.out.println("data:'" + new String(data) + "'");
+				// System.out.println("data:'" + new String(data) + "'");
 				stringData = new String(data).split("#")[1];
 				power = Integer.valueOf(stringData.split("&")[0]);
 				temp = Integer.valueOf(stringData.split("&")[1]);
-				delay = Calendar.getInstance().getTimeInMillis() - Long.valueOf(stringData.split("&")[2]);
-				System.out.println("Delay:" + delay);
+				delaySum += Calendar.getInstance().getTimeInMillis()
+						- Long.valueOf(stringData.split("&")[2]);
 				room.setPower(power);
 				room.setTemperature(temp);
 			}
@@ -104,7 +112,7 @@ public class UDPServer extends Thread {
 		rooms.add(room);
 		return room;
 	}
-	
+
 	private void clearData() {
 		data = new byte[BUFFER_SIZE];
 	}
