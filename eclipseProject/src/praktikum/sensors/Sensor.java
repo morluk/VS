@@ -12,7 +12,7 @@ public class Sensor extends Thread {
 	private static final String HOUSESERVER_ADRESS = "localhost";
 	private static final int PORT = 9998;
 	// milliseconds
-	private static final int INTERVAL = 500;
+	private static final int INTERVAL = 1;
 
 	private byte data[];
 
@@ -41,7 +41,7 @@ public class Sensor extends Thread {
 			try {
 				setRandomNo();
 				sendData();
-				System.out.println("sent:'" + (new String(data)) + "'");
+				//System.out.println("sent:'" + (new String(data)) + "'");
 				Thread.sleep(INTERVAL);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -70,6 +70,8 @@ public class Sensor extends Thread {
 		data += String.valueOf(randValue.getRandomPower());
 		data += "&";
 		data += String.valueOf(randValue.getRandomTemp(getDate().get(Calendar.MONTH)));
+		data += "&";
+		data += String.valueOf(Calendar.getInstance().getTimeInMillis());
 		data += "#";
 		this.data = data.getBytes();
 

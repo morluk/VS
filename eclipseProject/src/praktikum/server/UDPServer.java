@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,6 +60,7 @@ public class UDPServer extends Thread {
 		Room room;
 		int power;
 		int temp;
+		long delay;
 
 		if (running) {
 			System.out.println("Allready running");
@@ -80,6 +82,8 @@ public class UDPServer extends Thread {
 				stringData = new String(data).split("#")[1];
 				power = Integer.valueOf(stringData.split("&")[0]);
 				temp = Integer.valueOf(stringData.split("&")[1]);
+				delay = Calendar.getInstance().getTimeInMillis() - Long.valueOf(stringData.split("&")[2]);
+				System.out.println("Delay:" + delay);
 				room.setPower(power);
 				room.setTemperature(temp);
 			}
