@@ -12,7 +12,7 @@ public class Sensor extends Thread {
 	private static final String HOUSESERVER_ADRESS = "localhost";
 	private static final int PORT = 9998;
 	// milliseconds
-	private static final int INTERVAL = 0;
+	private static final int INTERVAL = 1;
 
 	private byte data[];
 
@@ -94,11 +94,11 @@ public class Sensor extends Thread {
 
 	/**
 	 * 
-	 * @param args -room int sets No of rooms, Default: 3
+	 * @param args -room int sets No of rooms, Default: 1
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-		int rooms = 3;
+		int rooms = 1;
 		if (args.length == 2) {
 			if (args[0].equals("-room")) {
 				rooms = Integer.parseInt(args[1]);

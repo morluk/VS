@@ -14,19 +14,19 @@ class Room {
 		this.address = address;
 	}
 
-	public int getTemperature() {
+	public synchronized int getTemperature() {
 		return temperature;
 	}
 
-	public void setTemperature(int temperature) {
+	public synchronized void setTemperature(int temperature) {
 		this.temperature = temperature;
 	}
 
-	public int getPower() {
+	public synchronized int getPower() {
 		return power;
 	}
 
-	public void setPower(int power) {
+	public synchronized void setPower(int power) {
 		this.power = power;
 	}
 
@@ -34,11 +34,11 @@ class Room {
 		return name;
 	}
 
-	public String getAddress() {
+	public synchronized String getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public synchronized void setAddress(String address) {
 		this.address = address;
 	}
 }

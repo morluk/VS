@@ -1,0 +1,4 @@
+#!/bin/bash
+
+javac -d bin src/praktikum/sensors/*
+javac -d bin src/praktikum/server/*
