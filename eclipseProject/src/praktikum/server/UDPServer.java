@@ -10,15 +10,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * running erlaubt nur 1 Thread Thread sinnvoll weil sonst HouseServer nicht
- * weiter läuft.
- * 
+ * Listens on port 9998 for UDP packets from Sensor
  * @author moritz
- *
+ * 
  */
 public class UDPServer extends Thread {
 	private static final int PORT = 9998;
+	
 	private static final int BUFFER_SIZE = 1024;
+	// milliseconds
+	private static final int INTERVAL = 1000;
 
 	private List<Room> rooms;
 
@@ -30,11 +31,11 @@ public class UDPServer extends Thread {
 
 	private int received = 0;
 
-	private int receivedCounter = 0;
-
 	private int delaySum = 0;
-	
-	private int delaySumOld = 0;
+
+	private int idRecievedCounter = 0;
+
+	private int idLostCounter = 0;
 
 	public UDPServer(List<Room> rooms) {
 		this.rooms = rooms;
@@ -42,22 +43,24 @@ public class UDPServer extends Thread {
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				resetCounter();
 				System.out.println("Packets per Second received: "
-						+ receivedCounter);
-				System.out.println("Average Delay per Second: "
-						+ (receivedCounter > 0 ? delaySumOld / receivedCounter
-								: delaySumOld));
+						+ received
+						+ " Average Delay per Second: "
+						+ (received > 0 ? delaySum / received
+								: delaySum));
+				System.out.println("IDRecieved: " + idRecievedCounter
+						+ " IDLost: " + idLostCounter);
+				resetCounter();
 			}
-		}, 0, 1000);
+		}, 0, INTERVAL);
 		start();
 	}
 
 	public void resetCounter() {
-		receivedCounter = received;
 		received = 0;
-		delaySumOld = delaySum;
 		delaySum = 0;
+		idLostCounter = 0;
+		idRecievedCounter = 0;
 	}
 
 	public void stopListening() {
@@ -88,16 +91,35 @@ public class UDPServer extends Thread {
 				socket.receive(packet);
 				received++;
 				address = packet.getAddress().toString();
-				name = new String(data).split("#")[0];
+				String dataStr = new String(data);
+				name = dataStr.split("#")[0];
 				room = getRoom(name, address);
-				// System.out.println("data:'" + new String(data) + "'");
-				stringData = new String(data).split("#")[1];
-				power = Integer.valueOf(stringData.split("&")[0]);
-				temp = Integer.valueOf(stringData.split("&")[1]);
-				delaySum += Calendar.getInstance().getTimeInMillis()
-						- Long.valueOf(stringData.split("&")[2]);
-				room.setPower(power);
-				room.setTemperature(temp);
+				// set counters corresponding to lastIdRecieved
+				String currIdStr = dataStr.split("#")[2];
+				int currIdInt = Integer.parseInt(currIdStr);
+				int lastId = new Integer(room.getLastIdRecieved());
+				if (currIdInt > lastId) {
+					// recieved in order
+					room.setLastIdRecieved(currIdInt);
+					idRecievedCounter++;
+					if (currIdInt > (lastId + 1)) {
+						// packet in between lost
+						int difference = Math.abs(currIdInt - lastId - 1);
+						idLostCounter += difference;
+					}
+					// extract data
+					stringData = dataStr.split("#")[1];
+					power = Integer.valueOf(stringData.split("&")[0]);
+					temp = Integer.valueOf(stringData.split("&")[1]);
+					room.setPower(power);
+					room.setTemperature(temp);
+					delaySum += Calendar.getInstance().getTimeInMillis()
+							- Long.valueOf(stringData.split("&")[2]);
+				} else if (currIdInt < lastId) {
+					// recieved out of order
+					idRecievedCounter++;
+					idLostCounter--;
+				}
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
@@ -106,9 +128,15 @@ public class UDPServer extends Thread {
 		}
 	}
 
+	/**
+	 * Returns reference to room or creates new room with parameters
+	 * @param name
+	 * @param address
+	 * @return
+	 */
 	private Room getRoom(String name, String address) {
 		for (Room room : this.rooms) {
-			if (room.getName().equals(name)) {
+			if (room.getName().equals(name) && room.getAddress().equals(address)) {
 				return room;
 			}
 		}

@@ -1,5 +1,11 @@
 package praktikum.server;
 
+/**
+ * Critical section between TCPServer and UDPServer
+ * @author moritz
+ *
+ */
+
 class Room {
 	private String name;
 
@@ -9,9 +15,23 @@ class Room {
 	
 	private String address;
 	
+	private int lastIdRecieved = 0;
+	
 	public Room(String name, String address) {
 		this.name = name;
 		this.address = address;
+	}
+
+	public synchronized int getLastIdRecieved() {
+		return lastIdRecieved;
+	}
+
+	public synchronized void setLastIdRecieved(int lastIdRecieved) {
+		this.lastIdRecieved = lastIdRecieved;
+	}
+
+	public synchronized void setName(String name) {
+		this.name = name;
 	}
 
 	public synchronized int getTemperature() {
