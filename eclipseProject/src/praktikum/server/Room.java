@@ -2,24 +2,32 @@ package praktikum.server;
 
 /**
  * Critical section between TCPServer and UDPServer
+ * 
  * @author moritz
- *
+ * 
  */
 
-class Room {
+public class Room {
 	private String name;
 
 	private int temperature;
 
 	private int power;
-	
+
 	private String address;
-	
+
 	private int lastIdRecieved = 0;
-	
+
 	public Room(String name, String address) {
 		this.name = name;
 		this.address = address;
+	}
+	
+	public Room(int temp, int power) {
+		this.name = "";
+		this.address = "";
+		this.temperature = temp;
+		this.power = power;
 	}
 
 	public synchronized int getLastIdRecieved() {

@@ -43,13 +43,13 @@ public class UDPServer extends Thread {
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				System.out.println("Packets per Second received: "
-						+ received
-						+ " Average Delay per Second: "
-						+ (received > 0 ? delaySum / received
-								: delaySum));
-				System.out.println("IDRecieved: " + idRecievedCounter
-						+ " IDLost: " + idLostCounter);
+//				System.out.println("Packets per Second received: "
+//						+ received
+//						+ " Average Delay per Second: "
+//						+ (received > 0 ? delaySum / received
+//								: delaySum));
+//				System.out.println("IDRecieved: " + idRecievedCounter
+//						+ " IDLost: " + idLostCounter);
 				resetCounter();
 			}
 		}, 0, INTERVAL);
