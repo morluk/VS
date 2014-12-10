@@ -9,20 +9,29 @@ import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
 import org.apache.xmlrpc.webserver.WebServer;
 
 /**
- * HouseServer has TCP Server listening on port 9999 for 
- * HTTP requests and UDP Server listening on port 9998 for
- * custom Sensor packets.
+ * HouseServer has TCP Server listening on port 9999 for HTTP requests and UDP
+ * Server listening on port 9998 for custom Sensor packets.
+ * 
  * @author moritz
  *
  */
 
 public class HouseServer {
-	private static List<Room> rooms = new ArrayList<Room>();
-	//ports for XmlRpcServers. 
-	//TODO: Multiple Server ueber versch. Ports
-	private static final int port[] = { 8080 };
 
-	public HouseServer() {
+	private static List<Room> rooms = new ArrayList<Room>();
+	// ports for XmlRpcServers.
+	// TODO: Multiple Server ueber versch. Ports
+	private List<Integer> port;
+
+	public List<Integer> getPort() {
+		return this.port;
+	}
+
+	public HouseServer(int startPort, int endPort) {
+		port = new ArrayList<Integer>();
+		for (int i = startPort; i < endPort; i++) {
+			port.add(i);
+		}
 		new MultithreadedTCPServer(this);
 		new UDPServer(rooms);
 	}
@@ -34,31 +43,35 @@ public class HouseServer {
 	public static Room getRoom(int pos) {
 		return rooms.get(pos);
 	}
-	
+
 	public static void main(String[] args) {
-		new HouseServer();
-		for (int i = 0; i < port.length; i++) {
+
+		HouseServer houseServer = new HouseServer(8000, 9000);
+		for (int i = 0; i < houseServer.getPort().size(); i++) {
 			try {
-				WebServer webServer = new WebServer(port[i]);
+				WebServer webServer = new WebServer(houseServer.getPort()
+						.get(i));
 
 				XmlRpcServer xmlRpcServer = webServer.getXmlRpcServer();
 				PropertyHandlerMapping phm = new PropertyHandlerMapping();
 
-				//TODO: Multiple Server auf einem Rechner ueber versch. Namen
+				// TODO: Multiple Server auf einem Rechner ueber versch. Namen
 				phm.addHandler("MyXmlRpcServer", MyXmlRpcServer.class);
 				// Integer zahl = 1;
 				// String server = "MyXmlRpcServer_" + zahl.toString();
 				// phm.addHandler(server, MyXmlRpcServer.class);
 				xmlRpcServer.setHandlerMapping(phm);
 
-				 XmlRpcServerConfigImpl serverConfig =
-				 (XmlRpcServerConfigImpl) xmlRpcServer.getConfig();
-				 serverConfig.setEnabledForExtensions(true);
-				 serverConfig.setContentLengthOptional(true);
+				XmlRpcServerConfigImpl serverConfig = (XmlRpcServerConfigImpl) xmlRpcServer
+						.getConfig();
+				serverConfig.setEnabledForExtensions(true);
+				serverConfig.setContentLengthOptional(true);
 
 				webServer.start();
 
-				System.out.println("The MyXmlRpc Server has been started on port " + port[i] + " ...");
+				System.out
+						.println("The MyXmlRpc Server has been started on port "
+								+ houseServer.getPort().get(i) + " ...");
 
 			} catch (Exception exception) {
 				System.err.println("JavaServer: " + exception);
