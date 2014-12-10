@@ -48,6 +48,8 @@ public class AdminServer {
 		// iterate over lists
 		for (int i = 0; i < rooms.size(); i++) {
 			List<Room> currList = rooms.get(i);
+			if (currList.size() == 0)
+				break;
 			System.out.println("---------------");
 			System.out.println("House No. " + i + ": ");
 			System.out.println("---------------");
@@ -76,11 +78,33 @@ public class AdminServer {
 
 	public static void main(String[] args) {
 
-		int startPort = Integer.parseInt(args[0]);
+		int startPort = 8000;
 
-		int endPort = Integer.parseInt(args[1]);
+		int endPort = 8001;
 
-		int TIMESPAN = Integer.parseInt(args[2]);
+		int TIMESPAN = 10;
+		
+		String serverIp = "localhost";
+		
+		String output = "y";
+		
+		for (int i = 0; i < args.length - 1; i++) {
+			if (args[i].equals("-sp")) {
+				startPort = Integer.parseInt(args[i + 1]);
+			}
+			if (args[i].equals("-ep")) {
+				endPort = Integer.parseInt(args[i + 1]);
+			}
+			if (args[i].equals("-t")) {
+				TIMESPAN = Integer.parseInt(args[i + 1]);
+			}
+			if (args[i].equals("-ip")) {
+				serverIp = args[i + 1];
+			}
+			if (args[i].equals("-o")) {
+				output = args[i + 1];
+			}
+		}
 
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.SECOND, TIMESPAN);
@@ -89,10 +113,10 @@ public class AdminServer {
 
 		String PingMe[] = new String[endPort - startPort];
 
-		int INTERVALL = 60000;
-		// TODO: Multiple Server auf versch. IPs/Ports
+//		int INTERVALL = 60000;
+		//Multiple Server auf versch. IPs/Ports
 		for (int i = startPort; i < endPort; i++) {
-			PingMe[i - startPort] = "http://" + args[3] + ":" + i + "/xmlrpc";
+			PingMe[i - startPort] = "http://" + serverIp + ":" + i + "/xmlrpc";
 		}
 
 		// TODO: Multiple Server auf einem Port
@@ -100,13 +124,20 @@ public class AdminServer {
 
 		AdminServer adminServer = new AdminServer(PingMe, Servers);
 
+		//While TIMESPAN count RPC Calls
 		while (Calendar.getInstance().getTimeInMillis() < cal.getTimeInMillis()) {
 			adminServer.startClients();
-			// adminServer.terminalOutput();
+			if (output.equals("y"))
+				adminServer.terminalOutput();
+//			try {
+//				Thread.sleep(INTERVALL);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 			counter++;
 		}
 
-		System.out.println("Counter: " + counter);
+		System.out.println("RPC Calls in " + TIMESPAN + " seconds:\t" + counter);
 
 	}
 }

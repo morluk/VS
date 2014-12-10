@@ -45,8 +45,18 @@ public class HouseServer {
 	}
 
 	public static void main(String[] args) {
+		int startport = 8000;
+		int endport = 8001;
+		for (int i = 0; i < args.length - 1; i++) {
+			if (args[i].equals("-sp")) {
+				startport = Integer.parseInt(args[i + 1]);
+			}
+			if (args[i].equals("-ep")) {
+				endport = Integer.parseInt(args[i + 1]);
+			}
+		}
 
-		HouseServer houseServer = new HouseServer(8000, 9000);
+		HouseServer houseServer = new HouseServer(startport, endport);
 		for (int i = 0; i < houseServer.getPort().size(); i++) {
 			try {
 				WebServer webServer = new WebServer(houseServer.getPort()
