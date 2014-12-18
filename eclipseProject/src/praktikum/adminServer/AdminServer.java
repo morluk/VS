@@ -44,36 +44,38 @@ public class AdminServer {
 	/**
 	 * put Results on screen. Includes Calculation of Max/Min values
 	 */
-	public void terminalOutput() {
+	public String terminalOutput() {
 		// iterate over lists
+		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < rooms.size(); i++) {
 			List<Room> currList = rooms.get(i);
 			if (currList.size() == 0)
 				break;
-			System.out.println("---------------");
-			System.out.println("House No. " + i + ": ");
-			System.out.println("---------------");
+			builder.append("---------------\n");
+			builder.append("House No. " + i + ": \n");
+			builder.append("---------------\n");
 			int highestTemp = currList.get(0).getTemperature();
 			int lowestTemp = currList.get(0).getTemperature();
 			int totalPower = 0;
 			// iterate over rooms
 			for (int j = 0; j < currList.size(); j++) {
-				System.out.println("Room " + j + " - Temp:\t"
+				builder.append("Room " + j + " - Temp:\t"
 						+ currList.get(j).getTemperature() + "\t- Power:\t"
-						+ currList.get(j).getPower());
+						+ currList.get(j).getPower() + "\n");
 				totalPower += currList.get(j).getPower();
 				if (highestTemp < currList.get(j).getTemperature())
 					highestTemp = currList.get(j).getTemperature();
 				if (lowestTemp > currList.get(j).getTemperature())
 					lowestTemp = currList.get(j).getTemperature();
 			}
-			System.out.println("HighestTemp of House No. " + i + " :\t"
-					+ highestTemp);
-			System.out.println("LowestTemp of House No. " + i + " :\t"
-					+ lowestTemp);
-			System.out.println("TotalPower of House No. " + i + " :\t"
-					+ totalPower);
+			builder.append("HighestTemp of House No. " + i + " :\t"
+					+ highestTemp + "\n");
+			builder.append("LowestTemp of House No. " + i + " :\t"
+					+ lowestTemp + "\n");
+			builder.append("TotalPower of House No. " + i + " :\t"
+					+ totalPower + "\n");
 		}
+		return builder.toString();
 	}
 
 	public static void main(String[] args) {
@@ -128,7 +130,7 @@ public class AdminServer {
 		while (Calendar.getInstance().getTimeInMillis() < cal.getTimeInMillis()) {
 			adminServer.startClients();
 			if (output.equals("y"))
-				adminServer.terminalOutput();
+				System.out.println(adminServer.terminalOutput());
 //			try {
 //				Thread.sleep(INTERVALL);
 //			} catch (InterruptedException e) {
