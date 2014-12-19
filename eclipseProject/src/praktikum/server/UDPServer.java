@@ -29,12 +29,16 @@ public class UDPServer extends Thread {
 
 	private Timer timer = new Timer();
 
+	@SuppressWarnings("unused")
 	private int received = 0;
 
+	@SuppressWarnings("unused")
 	private int delaySum = 0;
 
+	@SuppressWarnings("unused")
 	private int idRecievedCounter = 0;
 
+	@SuppressWarnings("unused")
 	private int idLostCounter = 0;
 
 	public UDPServer(List<Room> rooms) {

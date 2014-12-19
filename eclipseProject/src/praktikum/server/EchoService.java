@@ -92,8 +92,8 @@ public class EchoService extends Thread {
 		while ((htmlLine = htmlReader.readLine()) != null) {
 			htmlLine = htmlLine.trim();
 			if (htmlLine.contains("placeholder_Article")) {
-				for (int i = 0; i < houseServer.getRoomCount(); i++) {
-					Room currentRoom = houseServer.getRoom(i);
+				for (int i = 0; i < HouseServer.getRoomCount(); i++) {
+					Room currentRoom = HouseServer.getRoom(i);
 					result += "<article>";
 					result += "<h2>" + currentRoom.getName() + "</h2>";
 					result += "<table>";

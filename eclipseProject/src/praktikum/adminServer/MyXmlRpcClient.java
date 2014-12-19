@@ -36,7 +36,6 @@ public class MyXmlRpcClient {
 	 */
 	public void run() {
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-
 		try {
 			config.setServerURL(new URL(ip));
 			XmlRpcClient client = new XmlRpcClient();
@@ -48,11 +47,17 @@ public class MyXmlRpcClient {
 			Object[] realList;
 			realList = (Object[]) client
 					.execute(serverName + ".getList", param);
-			rooms.clear();
+			synchronized (rooms) {
+				rooms.clear();
+			}
+
 			for (int i = 0; i < realList.length; i += 2) {
-//				System.out.println("Result: " + (Integer) realList[i]);
-				rooms.add(new Room((Integer) realList[i],
-						(Integer) realList[i + 1]));
+				// System.out.println("Result: " + (Integer) realList[i]);
+				synchronized (rooms) {
+					rooms.add(new Room((Integer) realList[i],
+							(Integer) realList[i + 1]));
+				}
+
 			}
 
 		} catch (MalformedURLException e) {

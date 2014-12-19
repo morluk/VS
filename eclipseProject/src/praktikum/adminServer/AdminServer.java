@@ -70,10 +70,10 @@ public class AdminServer {
 			}
 			builder.append("HighestTemp of House No. " + i + " :\t"
 					+ highestTemp + "\n");
-			builder.append("LowestTemp of House No. " + i + " :\t"
-					+ lowestTemp + "\n");
-			builder.append("TotalPower of House No. " + i + " :\t"
-					+ totalPower + "\n");
+			builder.append("LowestTemp of House No. " + i + " :\t" + lowestTemp
+					+ "\n");
+			builder.append("TotalPower of House No. " + i + " :\t" + totalPower
+					+ "\n");
 		}
 		return builder.toString();
 	}
@@ -85,11 +85,13 @@ public class AdminServer {
 		int endPort = 8001;
 
 		int TIMESPAN = 10;
-		
+
 		String serverIp = "localhost";
-		
-		String output = "y";
-		
+
+		//String output = "y";
+
+		String name = "house0";
+
 		for (int i = 0; i < args.length - 1; i++) {
 			if (args[i].equals("-sp")) {
 				startPort = Integer.parseInt(args[i + 1]);
@@ -103,43 +105,56 @@ public class AdminServer {
 			if (args[i].equals("-ip")) {
 				serverIp = args[i + 1];
 			}
-			if (args[i].equals("-o")) {
-				output = args[i + 1];
+//			if (args[i].equals("-o")) {
+//				output = args[i + 1];
+//			}
+
+			if (args[i].equals("-name")) {
+				name = args[i + 1];
 			}
 		}
 
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.SECOND, TIMESPAN);
 
-		int counter = 0;
+		//int counter = 0;
 
 		String PingMe[] = new String[endPort - startPort];
 
-//		int INTERVALL = 60000;
-		//Multiple Server auf versch. IPs/Ports
+		// int INTERVALL = 60000;
+		// Multiple Server auf versch. IPs/Ports
 		for (int i = startPort; i < endPort; i++) {
 			PingMe[i - startPort] = "http://" + serverIp + ":" + i + "/xmlrpc";
 		}
 
 		// TODO: Multiple Server auf einem Port
 		String Servers[] = new String[] { "MyXmlRpcServer" };
-
+		
 		AdminServer adminServer = new AdminServer(PingMe, Servers);
 
-		//While TIMESPAN count RPC Calls
-		while (Calendar.getInstance().getTimeInMillis() < cal.getTimeInMillis()) {
+		MenuController menuController = new MenuController();
+
+		MomController momController = new MomController(adminServer.rooms, name);
+		
+		menuController.setMomController(momController);
+		
+		menuController.start();
+		
+		momController.start();
+
+		// While TIMESPAN count RPC Calls
+		while (true) {
 			adminServer.startClients();
-			if (output.equals("y"))
-				System.out.println(adminServer.terminalOutput());
-//			try {
-//				Thread.sleep(INTERVALL);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-			counter++;
+			//System.out.println(adminServer.terminalOutput());
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			//counter++;
 		}
 
-		System.out.println("RPC Calls in " + TIMESPAN + " seconds:\t" + counter);
-
+		// System.out.println("RPC Calls in " + TIMESPAN + " seconds:\t" +
+		// counter);
 	}
 }
