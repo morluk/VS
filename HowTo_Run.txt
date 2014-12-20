@@ -1,0 +1,43 @@
+------
+Broker
+------
+Download:
+scp istmohilb@userv-shell.fbi.h-da.de:apache-activemq-5.10.0-bin.tar.gz ./
+tar zxvf apache-activemq-5.10.0-bin.tar.gz
+
+start in ~/:
+apache-activemq-5.9.0/bin/activemq start
+
+test:
+netstat -an|grep 61616
+
+stop Ctrl+C oder:
+ps -ef|grep activemq
+kill [PID]
+  where [PID] is the process id of the ActiveMQ process.
+  
+-------------------
+Error when starting
+-------------------
+./activemq setup newConfig
+sudo mv /etc/default/activemq /etc/default/activemq_old
+sudo mv ./newConfig /etc/default/activemq
+./activemq start
+./activemq start
+
+---------
+My Config
+---------
+Download:
+scp -r istmohilb@userv-shell.fbi.h-da.de:adminConfiguration ./
+or
+scp -r istmohilb@userv-shell.fbi.h-da.de:brokerConfiguration ./
+
+1) start activemq broker
+2) start configurations on servers
+-) Befehle: alert, status, none für eigene HouseServer
+	    +1/+2/+3 für switch von anderen AdminServern (status-none-alert)
+-) Namensverteilung:  [1] 1(im Befehl)=2(in echt), 2=3, 3=4 (admin)
+		      [2] 1=1, 2=3, 3=4
+		      [3] 1=1, 2=2, 3=4
+		      [4] 1=1, 2=2, 3=3

@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.text.DateFormat;
@@ -83,11 +84,14 @@ public class EchoService extends Thread {
 	// read Htmlfile
 	private String createHtmlBody() throws Exception {
 		String result = new String();
+		BufferedReader htmlReader = null;
 		File htmlFile = new File("resource/index.html");
 		if (!htmlFile.exists()) {
-			htmlFile = new File("../resource/index.html");
+			InputStream in = getClass().getResourceAsStream("/index.html");
+			htmlReader = new BufferedReader(new InputStreamReader(in));
+		} else {
+			htmlReader = new BufferedReader(new FileReader(htmlFile));
 		}
-		BufferedReader htmlReader = new BufferedReader(new FileReader(htmlFile));
 		String htmlLine;
 		while ((htmlLine = htmlReader.readLine()) != null) {
 			htmlLine = htmlLine.trim();

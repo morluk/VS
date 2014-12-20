@@ -1,0 +1,8 @@
+#!/bin/bash
+
+java -jar Sensor.jar -r 10 -udpPort 9998 &
+java -jar HouseServer.jar -sp 8080 -ep 8081 -udpPort 9998 -tcpPort 9999 &
+java -jar Sensor.jar -r 10 -udpPort 9997 &
+java -jar HouseServer.jar -sp 8081 -ep 8082 -udpPort 9997 -tcpPort 9996 &
+#TODO: set '-n' to 2-4 and change '-mqIp' to brokers IP
+java -jar AdminServer.jar -sp 8080 -ep 8082 -t 5000 -ip localhost -n 2 -mqIp 192.168.0.20 -mqPort 61616 -o status

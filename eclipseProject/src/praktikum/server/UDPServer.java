@@ -6,8 +6,12 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Listens on port 9998 for UDP packets from Sensor
@@ -15,7 +19,7 @@ import java.util.TimerTask;
  * 
  */
 public class UDPServer extends Thread {
-	private static final int PORT = 9998;
+	private int PORT;
 	
 	private static final int BUFFER_SIZE = 1024;
 	// milliseconds
@@ -27,7 +31,7 @@ public class UDPServer extends Thread {
 
 	private boolean running;
 
-	private Timer timer = new Timer();
+//	private Timer timer = new Timer();
 
 	private int received = 0;
 
@@ -36,24 +40,61 @@ public class UDPServer extends Thread {
 	private int idRecievedCounter = 0;
 
 	private int idLostCounter = 0;
+	
+	private Logger myLogger = Logger.getLogger(UDPServer.class
+			.getName());
+	private FileHandler myFilehandler;
 
-	public UDPServer(List<Room> rooms) {
+	public UDPServer(List<Room> rooms, int udpPort) {
+		setDaemon(true);
 		this.rooms = rooms;
+		this.PORT = udpPort;
 		running = false;
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-//				System.out.println("Packets per Second received: "
+		initLogger();
+//		timer.scheduleAtFixedRate(new TimerTask() {
+//			@Override
+//			public void run() {
+////				System.out.println("Packets per Second received: "
+////						+ received
+////						+ " Average Delay per Second: "
+////						+ (received > 0 ? delaySum / received
+////								: delaySum));
+////				System.out.println("IDRecieved: " + idRecievedCounter
+////						+ " IDLost: " + idLostCounter);
+//				String msg = "Packets per Second received: "
 //						+ received
 //						+ " Average Delay per Second: "
 //						+ (received > 0 ? delaySum / received
-//								: delaySum));
-//				System.out.println("IDRecieved: " + idRecievedCounter
-//						+ " IDLost: " + idLostCounter);
-				resetCounter();
-			}
-		}, 0, INTERVAL);
+//								: delaySum);
+//				Logger.getLogger(UDPServer.class.getName()).log(Level.INFO,msg);
+//				msg = "IDRecieved: " + idRecievedCounter
+//						+ " IDLost: " + idLostCounter;
+//				Logger.getLogger(UDPServer.class.getName()).log(Level.INFO,msg);
+//				resetCounter();
+//			}
+//		}, 0, INTERVAL);
 		start();
+	}
+	
+	/**
+	 * initializes Logger for Exceptionhandling
+	 */
+	private void initLogger() {
+		myLogger.setUseParentHandlers(false);
+		Handler[] handlers = myLogger.getHandlers();
+		for (Handler handler : handlers) {
+			if (handler.getClass() == ConsoleHandler.class)
+				myLogger.removeHandler(handler);
+		}
+		try {
+			myFilehandler = new FileHandler("%t/UDPServer_" + PORT + "_LogFile.log", true);
+		} catch (SecurityException | IOException e) {
+			e.printStackTrace();
+		}
+		myLogger.addHandler(myFilehandler);
+		myLogger.setLevel(Level.ALL);
+		SimpleFormatter formatter = new SimpleFormatter();
+		myFilehandler.setFormatter(formatter);
 	}
 
 	public void resetCounter() {
@@ -83,6 +124,10 @@ public class UDPServer extends Thread {
 		}
 		running = true;
 		System.out.println("UDPServer starts on Port: " + PORT);
+		
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.SECOND, INTERVAL);
+		
 		try {
 			socket = new DatagramSocket(PORT);
 			while (running) {
@@ -119,6 +164,20 @@ public class UDPServer extends Thread {
 					// recieved out of order
 					idRecievedCounter++;
 					idLostCounter--;
+				}
+				// INTERVAL for counting UDPPackets reached?
+				if (Calendar.getInstance().getTimeInMillis() < cal
+						.getTimeInMillis()) {
+					String msg = "Packets per Second received: " + received
+							+ " Average Delay per Second: "
+							+ (received > 0 ? delaySum / received : delaySum);
+					Logger.getLogger(UDPServer.class.getName()).log(Level.INFO,
+							msg);
+					msg = "IDRecieved: " + idRecievedCounter + " IDLost: "
+							+ idLostCounter;
+					Logger.getLogger(UDPServer.class.getName()).log(Level.INFO,
+							msg);
+					resetCounter();
 				}
 			}
 		} catch (SocketException e) {

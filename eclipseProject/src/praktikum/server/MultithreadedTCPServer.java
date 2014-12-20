@@ -13,19 +13,21 @@ import java.net.Socket;
 
 public class MultithreadedTCPServer extends Thread {
 	HouseServer houseServer;
+	int PORT;
 
-	public MultithreadedTCPServer(HouseServer home) {
+	public MultithreadedTCPServer(HouseServer home, int port) {
+		setDaemon(true);
 		this.houseServer = home;
+		this.PORT = port;
 		this.start();
 	}
 
 	@Override
 	public void run() {
 		ServerSocket listenSocket = null;
-		int port = 9999;
 		try {
-			listenSocket = new ServerSocket(port);
-			System.out.println("Multithreaded Server starts on Port " + port);
+			listenSocket = new ServerSocket(PORT);
+			System.out.println("Multithreaded Server starts on Port " + PORT);
 			while (true) {
 				Socket client = listenSocket.accept();
 				System.out.println("Connection with: " + // Output connection

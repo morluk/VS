@@ -34,7 +34,7 @@ public class MyXmlRpcClient {
 	/**
 	 * call Remote Procedure and fill List<Room>
 	 */
-	public void run() {
+	public void callRpc() {
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 
 		try {

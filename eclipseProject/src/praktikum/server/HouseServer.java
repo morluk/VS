@@ -13,7 +13,7 @@ import org.apache.xmlrpc.webserver.WebServer;
  * Server listening on port 9998 for custom Sensor packets.
  * 
  * @author moritz
- *
+ * 
  */
 
 public class HouseServer {
@@ -27,13 +27,13 @@ public class HouseServer {
 		return this.port;
 	}
 
-	public HouseServer(int startPort, int endPort) {
+	public HouseServer(int startPort, int endPort, int udpPort, int tcpPort) {
 		port = new ArrayList<Integer>();
 		for (int i = startPort; i < endPort; i++) {
 			port.add(i);
 		}
-		new MultithreadedTCPServer(this);
-		new UDPServer(rooms);
+		new MultithreadedTCPServer(this, tcpPort);
+		new UDPServer(rooms, udpPort);
 	}
 
 	public static int getRoomCount() {
@@ -47,6 +47,8 @@ public class HouseServer {
 	public static void main(String[] args) {
 		int startport = 8000;
 		int endport = 8001;
+		int udpPort = 9998;
+		int tcpPort = 9999;
 		for (int i = 0; i < args.length - 1; i++) {
 			if (args[i].equals("-sp")) {
 				startport = Integer.parseInt(args[i + 1]);
@@ -54,9 +56,16 @@ public class HouseServer {
 			if (args[i].equals("-ep")) {
 				endport = Integer.parseInt(args[i + 1]);
 			}
+			if (args[i].equals("-udpPort")) {
+				udpPort = Integer.parseInt(args[i + 1]);
+			}
+			if (args[i].equals("-tcpPort")) {
+				tcpPort = Integer.parseInt(args[i + 1]);
+			}
 		}
 
-		HouseServer houseServer = new HouseServer(startport, endport);
+		HouseServer houseServer = new HouseServer(startport, endport, udpPort,
+				tcpPort);
 		for (int i = 0; i < houseServer.getPort().size(); i++) {
 			try {
 				WebServer webServer = new WebServer(houseServer.getPort()

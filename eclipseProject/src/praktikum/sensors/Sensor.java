@@ -24,7 +24,7 @@ import java.util.List;
 public class Sensor implements Runnable {
 	private String HOUSESERVER_ADRESS;
 
-	private static final int PORT = 9998;
+	private static int PORT;
 	// milliseconds
 	private static int INTERVAL;
 
@@ -34,9 +34,10 @@ public class Sensor implements Runnable {
 
 	private byte data[];
 
-	public Sensor(String ip) {
+	public Sensor(String ip, int port) {
 		HOUSESERVER_ADRESS = ip;
-		randValue = RandValue.getInstance();
+		PORT = port;
+		randValue = new RandValue();
 		try {
 			socket = new DatagramSocket();
 		} catch (SocketException e) {
@@ -123,6 +124,7 @@ public class Sensor implements Runnable {
 	public static void main(String[] args) throws IOException {
 		int rooms = 1;
 		String ip = "localhost";
+		int port = 9998;
 		int interval = 1000;
 		for (int i = 0; i < args.length - 1; i++) {
 			if (args[i].equals("-r")) {
@@ -134,15 +136,19 @@ public class Sensor implements Runnable {
 			if (args[i].equals("-i")) {
 				interval = Integer.parseInt(args[i + 1]);
 			}
+			if (args[i].equals("-udpPort")) {
+				port = Integer.parseInt(args[i + 1]);
+			}
 		}
 		// boost speed because only one Sensor object is created
 		// Caution avoid race condition between members and methods!
 		Sensor.INTERVAL = interval;
-		Sensor sensor = new Sensor(ip);
+		Sensor sensor = new Sensor(ip, port);
 		List<Thread> threads = new ArrayList<Thread>(rooms);
 		for (int i = 0; i < rooms; i++) {
 			Integer name = new Integer(i);
 			Thread t = new Thread(sensor, name.toString());
+			t.setDaemon(true); //Thread will exit when JVM exits
 			t.start();
 			threads.add(t);
 		}
