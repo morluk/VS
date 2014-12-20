@@ -1,1 +1,12 @@
 /examples/
+/tmp/
+/bin/
+/conf/
+/data/
+/docs/
+/lib/
+/webapps/
+/webapps-demo/
+/README.txt
+/NOTICE
+/LICENSE
