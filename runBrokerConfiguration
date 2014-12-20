@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./apache-activemq-5.10.0/bin/activemq start &
+#./apache-activemq-5.10.0/bin/activemq start &
 java -jar Sensor.jar -r 10 -udpPort 9998 &
 java -jar HouseServer.jar -sp 8080 -ep 8081 -udpPort 9998 -tcpPort 9999 &
 java -jar Sensor.jar -r 10 -udpPort 9997 &
