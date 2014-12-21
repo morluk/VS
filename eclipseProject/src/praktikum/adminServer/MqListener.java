@@ -16,7 +16,8 @@ public class MqListener {
 	private Connection connection;
 	private MessageConsumer consumer;
 	private String destination, hostIp, hostPort;
-	boolean connected;
+	private boolean connected;
+	
 
 	public MqListener(String hostIp, String hostPort, String destination)
 			throws JMSException {
@@ -24,6 +25,10 @@ public class MqListener {
 		this.hostIp = hostIp;
 		this.hostPort = hostPort;
 		setConnected(false);
+	}
+	
+	public String getDestination() {
+		return destination;
 	}
 
 	public synchronized boolean isConnected() {
@@ -88,8 +93,8 @@ public class MqListener {
 					break;
 				} else {
 					if ("OVER".equals(body)) {
-						this.close();
-//						break;
+//						this.close();
+						break;
 				}
 					else
 						System.out.println(body);

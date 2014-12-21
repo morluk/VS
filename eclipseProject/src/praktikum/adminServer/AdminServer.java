@@ -1,8 +1,6 @@
 package praktikum.adminServer;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -30,20 +28,9 @@ public class AdminServer {
 
 	private List<List<Room>> rooms;
 
-	private String progStatus, listen_1 = "status",listen_2 = "status",listen_3 = "status";
+	private MqController mqController;
 
-	private InetAddress myIP;
-
-	private MqPublisher statusPublisher;
-
-	private MqPublisher alertPublisher;
-
-	private MqListener statusListener_1, alertListener_1, statusListener_2,
-			alertListener_2, statusListener_3, alertListener_3;
-
-	String mqIp;
-
-	String mqPort;
+	private String progStatus;
 
 	private static Logger myLogger = Logger.getLogger(AdminServer.class
 			.getName());
@@ -69,64 +56,23 @@ public class AdminServer {
 		this.progStatus = progStatus;
 	}
 
+	public MqController getMqController() {
+		return mqController;
+	}
+
 	public AdminServer(String[] ips, String[] servers, String name,
-			String mqIp, String mqPort) {
+			String mqIp, String mqPort, int nrOfListeners) {
 		this.name = name;
 		this.PingMe = ips;
 		this.Servers = servers;
 		serverCount = ips.length * servers.length;
-		this.mqIp = mqIp;
-		this.mqPort = mqPort;
 		// List with rooms for each server
 		rooms = new ArrayList<List<Room>>(serverCount);
 		for (int i = 0; i < serverCount; i++) {
 			rooms.add(new ArrayList<Room>());
 		}
 		initLogger();
-		try {
-			statusPublisher = new MqPublisher(mqIp, mqPort, "status_" + name);
-			alertPublisher = new MqPublisher(mqIp, mqPort, "alert_" + name);
-			// verschiedene destinations fuer versch Haeuser. name == 1/2/3/4
-			if (name.contains("1")) {
-				statusListener_1 = new MqListener(mqIp, mqPort, "status_2");
-				alertListener_1 = new MqListener(mqIp, mqPort, "alert_2");
-				statusListener_2 = new MqListener(mqIp, mqPort, "status_3");
-				alertListener_2 = new MqListener(mqIp, mqPort, "alert_3");
-				statusListener_3 = new MqListener(mqIp, mqPort, "status_4");
-				alertListener_3 = new MqListener(mqIp, mqPort, "alert_4");
-			} else if (name.contains("2")) {
-				statusListener_1 = new MqListener(mqIp, mqPort, "status_1");
-				alertListener_1 = new MqListener(mqIp, mqPort, "alert_1");
-				statusListener_2 = new MqListener(mqIp, mqPort, "status_3");
-				alertListener_2 = new MqListener(mqIp, mqPort, "alert_3");
-				statusListener_3 = new MqListener(mqIp, mqPort, "status_4");
-				alertListener_3 = new MqListener(mqIp, mqPort, "alert_4");
-			} else if (name.contains("3")) {
-				statusListener_1 = new MqListener(mqIp, mqPort, "status_1");
-				alertListener_1 = new MqListener(mqIp, mqPort, "alert_1");
-				statusListener_2 = new MqListener(mqIp, mqPort, "status_2");
-				alertListener_2 = new MqListener(mqIp, mqPort, "alert_2");
-				statusListener_3 = new MqListener(mqIp, mqPort, "status_4");
-				alertListener_3 = new MqListener(mqIp, mqPort, "alert_4");
-			} else if (name.contains("4")) {
-				statusListener_1 = new MqListener(mqIp, mqPort, "status_1");
-				alertListener_1 = new MqListener(mqIp, mqPort, "alert_1");
-				statusListener_2 = new MqListener(mqIp, mqPort, "status_2");
-				alertListener_2 = new MqListener(mqIp, mqPort, "alert_2");
-				statusListener_3 = new MqListener(mqIp, mqPort, "status_3");
-				alertListener_3 = new MqListener(mqIp, mqPort, "alert_3");
-			}
-		} catch (JMSException e) {
-			e.printStackTrace();
-		}
-		// save own IP
-		myIP = null;
-		try {
-			myIP = InetAddress.getLocalHost();
-
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+		mqController = new MqController(nrOfListeners, name, mqIp, mqPort);
 	}
 
 	/**
@@ -168,70 +114,18 @@ public class AdminServer {
 	/**
 	 * put Results on screen. Includes Calculation of Max/Min values
 	 * 
-	 * @throws JMSException
 	 */
-	public void terminalOutput(String state) throws JMSException {
-		// Receive Messages from MoM
-		switch (this.getListen_1()) {
-		case "status":
-			alertListener_1.close();
-			statusListener_1.run();
-			break;
-		case "alert":
-			alertListener_1.run();
-			break;
-		case "":
-			statusListener_1.close();
-			break;
-		default:
-		}
-		switch (this.getListen_2()) {
-		case "status":
-			alertListener_2.close();
-			statusListener_2.run();
-			break;
-		case "alert":
-			alertListener_2.run();
-			break;
-		case "":
-			statusListener_2.close();
-			break;
-		default:
-		}
-		switch (this.getListen_3()) {
-		case "status":
-			alertListener_3.close();
-			statusListener_3.run();
-			break;
-		case "alert":
-			alertListener_3.run();
-			break;
-		case "":
-			statusListener_3.close();
-			break;
-		default:
-		}
-		statusPublisher.publishMessage("START Status From AdminServer: "
-				+ this.name + ": " + myIP);
-		alertPublisher.publishMessage("START Alert From AdminServer: "
-				+ this.name + ": " + myIP);
+	public void terminalOutput(String state) {
+		if (state.equals("none"))
+			return;
 		// iterate over lists
 		for (int i = 0; i < rooms.size(); i++) {
 			List<Room> currList = rooms.get(i);
 			if (currList.size() == 0)
 				break;
-			if (!state.equals("none")) {
-				System.out.println("---------------");
-				System.out.println("House No. " + i + ": ");
-				System.out.println("---------------");
-			}
-			// Send Message to MoM
-			statusPublisher.publishMessage("---------------");
-			statusPublisher.publishMessage("House No. " + i + ": ");
-			statusPublisher.publishMessage("---------------");
-			alertPublisher.publishMessage("---------------");
-			alertPublisher.publishMessage("House No. " + i + ": ");
-			alertPublisher.publishMessage("---------------");
+			System.out.println("--------------");
+			System.out.println("Flat No. " + i + ": ");
+			System.out.println("--------------");
 			int highestTemp = currList.get(0).getTemperature();
 			int lowestTemp = currList.get(0).getTemperature();
 			int totalPower = 0;
@@ -255,19 +149,6 @@ public class AdminServer {
 						}
 					}
 				}
-				// Mom Output
-				if (currList.get(j).getTemperature() < 10
-						|| currList.get(j).getTemperature() > 30
-						|| currList.get(j).getPower() > 2) {
-					// Send Alert Message to MoM
-					alertPublisher.publishMessage("Room " + j + " - Temp:\t"
-							+ currList.get(j).getTemperature() + "\t- Power:\t"
-							+ currList.get(j).getPower());
-				}
-				// Send Status Message to MoM always
-				statusPublisher.publishMessage("Room " + j + " - Temp:\t"
-						+ currList.get(j).getTemperature() + "\t- Power:\t"
-						+ currList.get(j).getPower());
 				totalPower += currList.get(j).getPower();
 				if (highestTemp < currList.get(j).getTemperature())
 					highestTemp = currList.get(j).getTemperature();
@@ -282,90 +163,59 @@ public class AdminServer {
 				System.out.println("TotalPower of House No. " + i + " :\t"
 						+ totalPower);
 			}
-			// Send Status Message to MoM always
-			statusPublisher.publishMessage("HighestTemp of House No. " + i
-					+ " :\t" + highestTemp);
-			statusPublisher.publishMessage("LowestTemp of House No. " + i
-					+ " :\t" + lowestTemp);
-			statusPublisher.publishMessage("TotalPower of House No. " + i
-					+ " :\t" + totalPower);
 		}
-		statusPublisher.publishMessage("STOP Status From AdminServer "
-				+ this.name + ": " + myIP);
-		statusPublisher.publishMessage("OVER");
-		alertPublisher.publishMessage("STOP Alert From AdminServer "
-				+ this.name + ": " + myIP);
-		alertPublisher.publishMessage("OVER");
 	}
 
-	public synchronized String getListen_1() {
-		return listen_1;
-	}
-
-	public synchronized void setListen_1(String listen_1) {
-		this.listen_1 = listen_1;
-	}
-
-	public synchronized String getListen_2() {
-		return listen_2;
-	}
-
-	public synchronized void setListen_2(String listen_2) {
-		this.listen_2 = listen_2;
-	}
-
-	public synchronized String getListen_3() {
-		return listen_3;
-	}
-
-	public synchronized void setListen_3(String listen_3) {
-		this.listen_3 = listen_3;
+	public void publishToMom() {
+		try {
+			mqController.publishAlert(rooms);
+			mqController.publishStatus(rooms);
+		} catch (JMSException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args) {
-
+		// xmlRpc Server port
 		int startPort = 8000;
-
+		// xmlRpc Server port
 		int endPort = 8001;
 		// for Sleeping until next RPCCall
 		int INTERVAL = 5000;
 		// for Logging XMLCalls
 		int TIMESPAN = 10;
-		//XMLRPC ServerIp
+		// XMLRPC ServerIp
 		String serverIp = "localhost";
 		// default Ausgabe
-		String output = "none";
-		// name == 1/2/3/4
+		String output = "yesAlert";
+		// name == 1/2/3/4/n
 		String name = "1";
-		//brokerIp
+		// brokerIp
 		String mqIp = "localhost";
-
+		// brokerPort
 		String mqPort = "61616";
+		// how many other AdminServers are there?
+		int noOfListeners = 3;
 
 		for (int i = 0; i < args.length - 1; i++) {
 			if (args[i].equals("-sp")) {
 				startPort = Integer.parseInt(args[i + 1]);
-			}
-			if (args[i].equals("-ep")) {
+			} else if (args[i].equals("-ep")) {
 				endPort = Integer.parseInt(args[i + 1]);
-			}
-			if (args[i].equals("-t")) {
+			} else if (args[i].equals("-t")) {
 				INTERVAL = Integer.parseInt(args[i + 1]);
-			}
-			if (args[i].equals("-ip")) {
+			} else if (args[i].equals("-ip")) {
 				serverIp = args[i + 1];
-			}
-			if (args[i].equals("-o")) {
+			} else if (args[i].equals("-o")) {
 				output = args[i + 1];
-			}
-			if (args[i].equals("-n")) {
+			} else if (args[i].equals("-n")) {
 				name = args[i + 1];
-			}
-			if (args[i].equals("-mqIp")) {
+			} else if (args[i].equals("-mqIp")) {
 				mqIp = args[i + 1];
-			}
-			if (args[i].equals("-mqPort")) {
+			} else if (args[i].equals("-mqPort")) {
 				mqPort = args[i + 1];
+			} else if (args[i].equals("-li")) {
+				noOfListeners = Integer.parseInt(args[i + 1]);
 			}
 		}
 
@@ -380,7 +230,7 @@ public class AdminServer {
 		String Servers[] = new String[] { "MyXmlRpcServer" };
 
 		AdminServer adminServer = new AdminServer(PingMe, Servers, name, mqIp,
-				mqPort);
+				mqPort, noOfListeners);
 		adminServer.setProgStatus(output); // default
 		// start Input als Thread
 		Thread t = new Thread(new Input(adminServer));
@@ -395,7 +245,7 @@ public class AdminServer {
 		while (true) {
 			String actProgStatus = adminServer.getProgStatus();
 			switch (actProgStatus) {
-			// TODO: hier kommen subscribe, detach hin!!!
+			// subscribe, detach Listeners and Output
 			case "alert":
 				output = "yesAlert";
 				break;
@@ -405,50 +255,31 @@ public class AdminServer {
 			case "none":
 				output = "none";
 				break;
-			case "+1":
-				if (adminServer.getListen_1().equals(""))
-					adminServer.setListen_1("alert");
-				else if (adminServer.getListen_1().equals("alert"))
-					adminServer.setListen_1("status");
-				else if (adminServer.getListen_1().equals("status"))
-					adminServer.setListen_1("");
-				break;
-			case "+2":
-				if (adminServer.getListen_2().equals(""))
-					adminServer.setListen_2("alert");
-				else if (adminServer.getListen_2().equals("alert"))
-					adminServer.setListen_2("status");
-				else if (adminServer.getListen_2().equals("status"))
-					adminServer.setListen_2("");
-				break;
-			case "+3":
-				if (adminServer.getListen_3().equals(""))
-					adminServer.setListen_3("alert");
-				else if (adminServer.getListen_3().equals("alert"))
-					adminServer.setListen_3("status");
-				else if (adminServer.getListen_3().equals("status"))
-					adminServer.setListen_3("");
-				break;
 			default:
+				// changeMode Command has to be: "+1/+2../+n"
+				if (actProgStatus.startsWith("+")) {
+					actProgStatus = actProgStatus.substring(1);
+					adminServer.getMqController().changeListenerMode(
+							actProgStatus);
+				}
+				break;
 			}
 			// fuer naechsten Durchlauf ProgStatus ungueltig machen
 			adminServer.setProgStatus("xxx");
 			// XMLRPC Call to HouseServer
 			adminServer.callRpcClients();
-			try {
-				// terminal and MQ Output
-				adminServer.terminalOutput(output);
-			} catch (JMSException e1) {
-				e1.printStackTrace();
-			}
+			adminServer.terminalOutput(output);
+			adminServer.publishToMom();
+			adminServer.getMqController().checkListeners();
 			counter++;
 			// TIMESPAN for counting RPC/MQCalls reached?
 			if (Calendar.getInstance().getTimeInMillis() > cal
 					.getTimeInMillis()) {
-				String msg = "RPC Calls in " + TIMESPAN + " seconds (calling"
-						+ " each of " + (PingMe.length * Servers.length)
-						+ " Host every " + INTERVAL / 1000 + " seconds):\t"
+				String msg = "RPC and ActiveMq Calls in " + TIMESPAN + " seconds:\t"
 						+ counter;
+				msg += " (RPC Server: " + (PingMe.length * Servers.length);
+				msg += " / ActiveMq Listener: " + (noOfListeners);
+				msg += " / Call each every " + INTERVAL + " milliSeconds)";
 				Logger.getLogger(AdminServer.class.getName()).log(Level.INFO,
 						msg);
 				counter = 0;
