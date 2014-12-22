@@ -31,14 +31,14 @@ public class MomController extends Thread {
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}
-		ReadingQueueThread thread = new ReadingQueueThread("critical",
-				momHandler);
-		thread.start();
-		readingQueueThreads.put("critical", thread);
+//		ReadingQueueThread thread = new ReadingQueueThread("critical",
+//				momHandler);
+//		thread.start();
+//		readingQueueThreads.put("critical", thread);
 
-		thread = new ReadingQueueThread(ownName, momHandler);
-		thread.start();
-		readingQueueThreads.put(ownName, thread);
+//		thread = new ReadingQueueThread(ownName, momHandler);
+//		thread.start();
+//		readingQueueThreads.put(ownName, thread);
 		
 //		thread = new ReadingQueueThread("house0", momHandler);
 //		thread.start();
@@ -61,7 +61,7 @@ public class MomController extends Thread {
 
 	private void sendValues() {
 		// iterate over lists
-		boolean isCritical = false;
+//		boolean isCritical = false;
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < rooms.size(); i++) {
 			List<Room> currList = rooms.get(i);
@@ -87,7 +87,7 @@ public class MomController extends Thread {
 			}
 
 			if (highestTemp > 30) {
-				isCritical = true;
+//				isCritical = true;
 			}
 
 			builder.append("HighestTemp of House No. " + i + " :\t"
@@ -98,9 +98,9 @@ public class MomController extends Thread {
 					+ "\n");
 		}
 		try {
-			if (isCritical) {
-				momHandler.sendToQueue("critical", builder.toString());
-			}
+//			if (isCritical) {
+//				momHandler.sendToQueue("critical", builder.toString());
+//			}
 			momHandler.sendToQueue(ownName, builder.toString());
 		} catch (JMSException e) {
 			e.printStackTrace();

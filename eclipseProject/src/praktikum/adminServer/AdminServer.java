@@ -88,9 +88,11 @@ public class AdminServer {
 
 		String serverIp = "localhost";
 
-		//String output = "y";
+		// String output = "y";
 
-		String name = "house0";
+		String name = "0";
+
+		int listenerCount = 1;
 
 		for (int i = 0; i < args.length - 1; i++) {
 			if (args[i].equals("-sp")) {
@@ -105,19 +107,23 @@ public class AdminServer {
 			if (args[i].equals("-ip")) {
 				serverIp = args[i + 1];
 			}
-//			if (args[i].equals("-o")) {
-//				output = args[i + 1];
-//			}
+			// if (args[i].equals("-o")) {
+			// output = args[i + 1];
+			// }
 
 			if (args[i].equals("-name")) {
 				name = args[i + 1];
+			}
+
+			if (args[i].equals("-listenerCount")) {
+				listenerCount = Integer.parseInt(args[i + 1]);
 			}
 		}
 
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.SECOND, TIMESPAN);
 
-		//int counter = 0;
+		// int counter = 0;
 
 		String PingMe[] = new String[endPort - startPort];
 
@@ -129,29 +135,35 @@ public class AdminServer {
 
 		// TODO: Multiple Server auf einem Port
 		String Servers[] = new String[] { "MyXmlRpcServer" };
-		
+
 		AdminServer adminServer = new AdminServer(PingMe, Servers);
 
-		MenuController menuController = new MenuController();
+		//MenuController menuController = new MenuController();
 
 		MomController momController = new MomController(adminServer.rooms, name);
-		
-		menuController.setMomController(momController);
-		
-		menuController.start();
-		
+
+		//menuController.setMomController(momController);
+
+		//menuController.start();
+
 		momController.start();
+
+		for (int i = 0; i < listenerCount; i++) {
+//			if (!String.valueOf(i).equals(name)) {
+				momController.addQueue(String.valueOf(i));
+//			}
+		}
 
 		// While TIMESPAN count RPC Calls
 		while (true) {
 			adminServer.startClients();
-			//System.out.println(adminServer.terminalOutput());
+			// System.out.println(adminServer.terminalOutput());
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			//counter++;
+			// counter++;
 		}
 
 		// System.out.println("RPC Calls in " + TIMESPAN + " seconds:\t" +
