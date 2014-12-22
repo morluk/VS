@@ -94,6 +94,8 @@ public class AdminServer {
 
 		int listenerCount = 1;
 
+		String showOwn = "n";
+
 		for (int i = 0; i < args.length - 1; i++) {
 			if (args[i].equals("-sp")) {
 				startPort = Integer.parseInt(args[i + 1]);
@@ -118,6 +120,10 @@ public class AdminServer {
 			if (args[i].equals("-listenerCount")) {
 				listenerCount = Integer.parseInt(args[i + 1]);
 			}
+
+			if (args[i].equals("-showOwn")) {
+				showOwn = args[i + 1];
+			}
 		}
 
 		Calendar cal = Calendar.getInstance();
@@ -138,20 +144,21 @@ public class AdminServer {
 
 		AdminServer adminServer = new AdminServer(PingMe, Servers);
 
-		//MenuController menuController = new MenuController();
+		// MenuController menuController = new MenuController();
 
 		MomController momController = new MomController(adminServer.rooms, name);
 
-		//menuController.setMomController(momController);
+		// menuController.setMomController(momController);
 
-		//menuController.start();
+		// menuController.start();
 
 		momController.start();
 
 		for (int i = 0; i < listenerCount; i++) {
-//			if (!String.valueOf(i).equals(name)) {
+			if ((String.valueOf(i).equals(name) && showOwn.equals("y"))
+					|| (!String.valueOf(i).equals(name))) {
 				momController.addQueue(String.valueOf(i));
-//			}
+			}
 		}
 
 		// While TIMESPAN count RPC Calls

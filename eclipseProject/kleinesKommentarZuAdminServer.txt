@@ -1,0 +1,19 @@
+-name 		= name fuer den hausverwalter und damit auch gleichzeitig der name
+				fuer dir queue auf der gesendet wird
+		
+-showOwn 	= y oder n um eigener queue zu lesen
+
+-listenerCount	= anzahl an queues auf denen recieved wird. 
+				Beispiel:
+				Wird dort 3 uebergeben, werden die queues mit den namen 0, 1 und 2 recieved.
+				Somit MÜSSEN die namen der 3 gestarteten AdminServer 0, 1 und 2 enthalten.
+				
+				
+
+java -jar test.jar -name 0 -listenerCount 5 -showOwn n
+java -jar test.jar -name 1 -listenerCount 5 -showOwn n
+java -jar test.jar -name 2 -listenerCount 5 -showOwn n
+java -jar test.jar -name 3 -listenerCount 5 -showOwn n
+java -jar test.jar -name 4 -listenerCount 5 -showOwn n
+
+wuerde 5 AdminServer starten, welche auf alle ausser auf sich selbst recieven
