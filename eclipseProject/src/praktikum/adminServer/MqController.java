@@ -17,6 +17,7 @@ public class MqController {
 
 	public MqController(int nrOfListeners, String adminServerName, String mqIp,
 			String mqPort) {
+		this.adminServerName = adminServerName;
 		try {
 			statusPublisher = new MqPublisher(mqIp, mqPort, "status_"
 					+ adminServerName);
@@ -52,6 +53,41 @@ public class MqController {
 
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public int getStatusPublisherCounter() {
+		return statusPublisher.getCounter();
+	}
+	
+	public int getAlertPublisherCounter() {
+		return alertPublisher.getCounter();
+	}
+	
+	public int getStatusListenerCounter() {
+		int result = 0; 
+		for (MqListener listener : statusListener) {
+			result += listener.getCounter();
+		}
+		return result;
+	}
+	
+	public int getAlertListenerCounter() {
+		int result = 0; 
+		for (MqListener listener : alertListener) {
+			result += listener.getCounter();
+		}
+		return result;
+	}
+	
+	public void resetAllCounter() {
+		alertPublisher.resetCounter();
+		statusPublisher.resetCounter();
+		for (MqListener listener : alertListener) {
+			listener.resetCounter();
+		}
+		for (MqListener listener : statusListener) {
+			listener.resetCounter();
 		}
 	}
 

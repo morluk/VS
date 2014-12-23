@@ -232,6 +232,7 @@ public class AdminServer {
 		AdminServer adminServer = new AdminServer(PingMe, Servers, name, mqIp,
 				mqPort, noOfListeners);
 		adminServer.setProgStatus(output); // default
+		
 		// start Input als Thread
 		Thread t = new Thread(new Input(adminServer));
 		t.setDaemon(true);
@@ -275,14 +276,21 @@ public class AdminServer {
 			// TIMESPAN for counting RPC/MQCalls reached?
 			if (Calendar.getInstance().getTimeInMillis() > cal
 					.getTimeInMillis()) {
-				String msg = "RPC and ActiveMq Calls in " + TIMESPAN + " seconds:\t"
+				String msg = "RPC Calls in " + TIMESPAN + " seconds:\t"
 						+ counter;
 				msg += " (RPC Server: " + (PingMe.length * Servers.length);
-				msg += " / ActiveMq Listener: " + (noOfListeners);
 				msg += " / Call each every " + INTERVAL + " milliSeconds)";
 				Logger.getLogger(AdminServer.class.getName()).log(Level.INFO,
 						msg);
+				msg = "";
+				int publisherCounter = adminServer.getMqController().getAlertPublisherCounter() + adminServer.getMqController().getStatusPublisherCounter();
+				int listenerCounter = adminServer.getMqController().getAlertListenerCounter() + adminServer.getMqController().getStatusListenerCounter();
+				msg += "ActiveMq Published Messages: " + publisherCounter + " - ActiveMq Received Messages: " + listenerCounter;
+				msg += " (Published to StatusQueue: " + adminServer.getMqController().getStatusPublisherCounter() +" / to AlertQueue: " + adminServer.getMqController().getAlertPublisherCounter() + ")";
+				Logger.getLogger(AdminServer.class.getName()).log(Level.INFO,
+						msg);
 				counter = 0;
+				adminServer.getMqController().resetAllCounter();
 				cal = Calendar.getInstance();
 				cal.add(Calendar.SECOND, TIMESPAN);
 			}

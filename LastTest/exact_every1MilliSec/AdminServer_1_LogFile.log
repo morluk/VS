@@ -1,0 +1,24 @@
+Dec 23, 2014 11:02:50 AM praktikum.adminServer.AdminServer main
+INFO: RPC Calls in 10 seconds:	704 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dec 23, 2014 11:02:50 AM praktikum.adminServer.AdminServer main
+INFO: ActiveMq Published Messages: 35477 - ActiveMq Received Messages: 3986 (Published to StatusQueue: 24640 / to AlertQueue: 10837)
+Dec 23, 2014 11:03:00 AM praktikum.adminServer.AdminServer main
+INFO: RPC Calls in 10 seconds:	1103 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dec 23, 2014 11:03:00 AM praktikum.adminServer.AdminServer main
+INFO: ActiveMq Published Messages: 55725 - ActiveMq Received Messages: 7303 (Published to StatusQueue: 38605 / to AlertQueue: 17120)
+Dec 23, 2014 11:03:10 AM praktikum.adminServer.AdminServer main
+INFO: RPC Calls in 10 seconds:	1293 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dec 23, 2014 11:03:10 AM praktikum.adminServer.AdminServer main
+INFO: ActiveMq Published Messages: 65367 - ActiveMq Received Messages: 7875 (Published to StatusQueue: 45255 / to AlertQueue: 20112)
+Dec 23, 2014 11:03:20 AM praktikum.adminServer.AdminServer main
+INFO: RPC Calls in 10 seconds:	1335 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dec 23, 2014 11:03:20 AM praktikum.adminServer.AdminServer main
+INFO: ActiveMq Published Messages: 68392 - ActiveMq Received Messages: 8715 (Published to StatusQueue: 46725 / to AlertQueue: 21667)
+Dec 23, 2014 11:03:30 AM praktikum.adminServer.AdminServer main
+INFO: RPC Calls in 10 seconds:	1347 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dec 23, 2014 11:03:30 AM praktikum.adminServer.AdminServer main
+INFO: ActiveMq Published Messages: 70648 - ActiveMq Received Messages: 9380 (Published to StatusQueue: 47145 / to AlertQueue: 23503)
+Dec 23, 2014 11:03:40 AM praktikum.adminServer.AdminServer main
+INFO: RPC Calls in 10 seconds:	1600 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dec 23, 2014 11:03:40 AM praktikum.adminServer.AdminServer main
+INFO: ActiveMq Published Messages: 82794 - ActiveMq Received Messages: 9870 (Published to StatusQueue: 56000 / to AlertQueue: 26794)

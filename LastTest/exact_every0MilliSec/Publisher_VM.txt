@@ -1,0 +1,24 @@
+Dez 23, 2014 11:19:05 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	130 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:19:05 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 6703 - ActiveMq Received Messages: 0 (Published to StatusQueue: 4550 / to AlertQueue: 2153)
+Dez 23, 2014 11:19:15 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	201 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:19:15 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 10406 - ActiveMq Received Messages: 0 (Published to StatusQueue: 7035 / to AlertQueue: 3371)
+Dez 23, 2014 11:19:25 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	208 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:19:25 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 10564 - ActiveMq Received Messages: 0 (Published to StatusQueue: 7280 / to AlertQueue: 3284)
+Dez 23, 2014 11:19:35 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	286 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:19:35 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 14471 - ActiveMq Received Messages: 0 (Published to StatusQueue: 10010 / to AlertQueue: 4461)
+Dez 23, 2014 11:19:45 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	280 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:19:45 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 14180 - ActiveMq Received Messages: 0 (Published to StatusQueue: 9800 / to AlertQueue: 4380)
+Dez 23, 2014 11:19:55 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	278 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:19:55 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 14056 - ActiveMq Received Messages: 0 (Published to StatusQueue: 9730 / to AlertQueue: 4326)

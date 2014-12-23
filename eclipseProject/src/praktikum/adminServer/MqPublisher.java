@@ -16,6 +16,7 @@ public class MqPublisher {
 	private MessageProducer producer;
 	private Session session;
 	private Connection connection;
+	private int counter = 0;
 	
 	public MqPublisher(String hostIp, String hostPort, String destination) throws JMSException {
         String mqUser = env("ACTIVEMQ_USER", "admin");
@@ -34,10 +35,19 @@ public class MqPublisher {
         producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 	}
 	
+	public int getCounter() {
+		return counter;
+	}
+	
+	public void resetCounter() {
+		counter = 0;
+	}
+
 	public void publishMessage(String message) throws JMSException {
         TextMessage msg = session.createTextMessage(message);
 //        msg.setIntProperty("id", id);
         producer.send(msg);
+        counter++;
 	}
 	
 	public void shutdownConnection() throws JMSException {

@@ -1,0 +1,28 @@
+Dez 23, 2014 11:02:45 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	134 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dez 23, 2014 11:02:45 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 6786 - ActiveMq Received Messages: 0 (Published to StatusQueue: 4690 / to AlertQueue: 2096)
+Dez 23, 2014 11:02:55 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	190 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dez 23, 2014 11:02:55 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 9926 - ActiveMq Received Messages: 0 (Published to StatusQueue: 6650 / to AlertQueue: 3276)
+Dez 23, 2014 11:03:05 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	194 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dez 23, 2014 11:03:05 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 10118 - ActiveMq Received Messages: 0 (Published to StatusQueue: 6790 / to AlertQueue: 3328)
+Dez 23, 2014 11:03:15 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	265 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dez 23, 2014 11:03:15 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 13691 - ActiveMq Received Messages: 0 (Published to StatusQueue: 9275 / to AlertQueue: 4416)
+Dez 23, 2014 11:03:25 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	253 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dez 23, 2014 11:03:26 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 13010 - ActiveMq Received Messages: 0 (Published to StatusQueue: 8855 / to AlertQueue: 4155)
+Dez 23, 2014 11:03:36 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	263 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dez 23, 2014 11:03:36 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 13383 - ActiveMq Received Messages: 0 (Published to StatusQueue: 9205 / to AlertQueue: 4178)
+Dez 23, 2014 11:03:46 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	305 (RPC Server: 2 / Call each every 1 milliSeconds)
+Dez 23, 2014 11:03:46 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 15225 - ActiveMq Received Messages: 0 (Published to StatusQueue: 10675 / to AlertQueue: 4550)

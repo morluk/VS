@@ -1,0 +1,24 @@
+Dez 23, 2014 11:30:40 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	98 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:30:40 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 5028 - ActiveMq Received Messages: 0 (Published to StatusQueue: 3430 / to AlertQueue: 1598)
+Dez 23, 2014 11:30:50 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	108 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:30:50 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 5483 - ActiveMq Received Messages: 0 (Published to StatusQueue: 3780 / to AlertQueue: 1703)
+Dez 23, 2014 11:31:00 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	136 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:31:00 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 6927 - ActiveMq Received Messages: 0 (Published to StatusQueue: 4760 / to AlertQueue: 2167)
+Dez 23, 2014 11:31:10 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	136 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:31:10 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 7031 - ActiveMq Received Messages: 0 (Published to StatusQueue: 4760 / to AlertQueue: 2271)
+Dez 23, 2014 11:31:20 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	160 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:31:20 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 8185 - ActiveMq Received Messages: 0 (Published to StatusQueue: 5600 / to AlertQueue: 2585)
+Dez 23, 2014 11:31:30 AM praktikum.adminServer.AdminServer main
+INFORMATION: RPC Calls in 10 seconds:	181 (RPC Server: 2 / Call each every 0 milliSeconds)
+Dez 23, 2014 11:31:30 AM praktikum.adminServer.AdminServer main
+INFORMATION: ActiveMq Published Messages: 9208 - ActiveMq Received Messages: 0 (Published to StatusQueue: 6335 / to AlertQueue: 2873) 

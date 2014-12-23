@@ -17,6 +17,7 @@ public class MqListener {
 	private MessageConsumer consumer;
 	private String destination, hostIp, hostPort;
 	private boolean connected;
+	private int counter = 0;
 	
 
 	public MqListener(String hostIp, String hostPort, String destination)
@@ -29,6 +30,14 @@ public class MqListener {
 	
 	public String getDestination() {
 		return destination;
+	}
+
+	public int getCounter() {
+		return counter;
+	}
+	
+	public void resetCounter() {
+		counter =0;
 	}
 
 	public synchronized boolean isConnected() {
@@ -85,6 +94,7 @@ public class MqListener {
 			Message msg = consumer.receiveNoWait();
 			if (msg == null) 
 				return;
+			counter++;
 			if (msg instanceof TextMessage) {
 				String body = ((TextMessage) msg).getText();
 				if ("SHUTDOWN".equals(body)) {
