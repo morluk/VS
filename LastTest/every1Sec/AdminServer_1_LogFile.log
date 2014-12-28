@@ -1,6 +1,0 @@
-Dec 21, 2014 11:03:36 AM praktikum.adminServer.AdminServer main
-INFO: RPC and ActiveMq Calls in 10 seconds:	11 (RPC Server: 2 / ActiveMq Listener: 3 / Call each every 1000 milliSeconds)
-Dec 21, 2014 11:03:47 AM praktikum.adminServer.AdminServer main
-INFO: RPC and ActiveMq Calls in 10 seconds:	10 (RPC Server: 2 / ActiveMq Listener: 3 / Call each every 1000 milliSeconds)
-Dec 21, 2014 11:03:57 AM praktikum.adminServer.AdminServer main
-INFO: RPC and ActiveMq Calls in 10 seconds:	10 (RPC Server: 2 / ActiveMq Listener: 3 / Call each every 1000 milliSeconds)
