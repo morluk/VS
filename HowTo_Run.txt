@@ -28,16 +28,14 @@ sudo mv ./newConfig /etc/default/activemq
 ---------
 My Config
 ---------
-Download:
-scp -r istmohilb@userv-shell.fbi.h-da.de:adminConfiguration ./
-or
-scp -r istmohilb@userv-shell.fbi.h-da.de:brokerConfiguration ./
-
-1) start activemq broker
-2) start configurations on servers
+1)Download jars:
+  via scp
+  Required Libs have to be in folders 'AdminServer_lib' and 'HouseServer_lib'
+2) start activemq broker
+3) start configurations on servers './runConfiguration'
 -) Befehle: alert, status, none für eigene HouseServer
 	    +1/+2/+3 für switch von anderen AdminServern (status-none-alert)
--) Namensverteilung:  [1] 1(im Befehl)=2(in echt), 2=3, 3=4 (admin)
-		      [2] 1=1, 2=3, 3=4
-		      [3] 1=1, 2=2, 3=4
+-) Namensverteilung:  [1] 2(im Befehl)=2(in echt), 3=3, 4=4 (admin)
+		      [2] 1=1, 3=3, 4=4
+		      [3] 1=1, 2=2, 4=4
 		      [4] 1=1, 2=2, 3=3
