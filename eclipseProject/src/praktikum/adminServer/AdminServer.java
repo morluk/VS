@@ -88,13 +88,15 @@ public class AdminServer {
 
 		String serverIp = "localhost";
 
-		// String output = "y";
+		String output = "y";
 
 		String name = "0";
 
-		int listenerCount = 1;
+		int listenerCount = 3;
 
-		String showOwn = "n";
+		String showOwn = "y";
+
+		int queueSleep = 1000;
 
 		for (int i = 0; i < args.length - 1; i++) {
 			if (args[i].equals("-sp")) {
@@ -109,9 +111,9 @@ public class AdminServer {
 			if (args[i].equals("-ip")) {
 				serverIp = args[i + 1];
 			}
-			// if (args[i].equals("-o")) {
-			// output = args[i + 1];
-			// }
+			if (args[i].equals("-o")) {
+				output = args[i + 1];
+			}
 
 			if (args[i].equals("-name")) {
 				name = args[i + 1];
@@ -123,6 +125,10 @@ public class AdminServer {
 
 			if (args[i].equals("-showOwn")) {
 				showOwn = args[i + 1];
+			}
+
+			if (args[i].equals("-queueSleep")) {
+				queueSleep = Integer.parseInt(args[i + 1]);
 			}
 		}
 
@@ -146,7 +152,8 @@ public class AdminServer {
 
 		// MenuController menuController = new MenuController();
 
-		MomController momController = new MomController(adminServer.rooms, name);
+		MomController momController = new MomController(adminServer.rooms,
+				name, queueSleep, (output.equals("y") ? true : false), listenerCount);
 
 		// menuController.setMomController(momController);
 
@@ -162,7 +169,7 @@ public class AdminServer {
 		}
 
 		// While TIMESPAN count RPC Calls
-		while (true) {
+		while (Calendar.getInstance().getTimeInMillis() < cal.getTimeInMillis()) {
 			adminServer.startClients();
 			// System.out.println(adminServer.terminalOutput());
 			try {
@@ -171,6 +178,25 @@ public class AdminServer {
 				e.printStackTrace();
 			}
 			// counter++;
+		}
+
+		System.out.println("SendCounter on AdminServer " + name + ": "
+				+ momController.getSendCounter());
+
+		for (int i = 0; i < listenerCount; i++) {
+			if ((String.valueOf(i).equals(name) && showOwn.equals("y"))
+					|| (!String.valueOf(i).equals(name))) {
+				System.out.println("RecievedCounter on AdminServer "
+						+ String.valueOf(i) + ": "
+						+ momController.getRecievedCounter(String.valueOf(i)));
+			}
+		}
+
+		momController.stopThread();
+		try {
+			momController.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 
 		// System.out.println("RPC Calls in " + TIMESPAN + " seconds:\t" +

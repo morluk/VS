@@ -45,7 +45,11 @@ public class MomHandler {
 	public String recieveFromQueue(String queue) throws JMSException {
 		MessageConsumer consumer = session.createConsumer(new ActiveMQTopic(
 				queue));
-		Message msg = consumer.receive();
+		Message msg = consumer.receiveNoWait();
+		
+		if (msg == null) {
+			return "";
+		}
 
 		return ((TextMessage) msg).getText();
 	}

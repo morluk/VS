@@ -19,7 +19,18 @@ public class MomController extends Thread {
 
 	private Map<String, MomController.ReadingQueueThread> readingQueueThreads;
 
-	public MomController(List<List<Room>> rooms, String ownName) {
+	private int sleepTime;
+
+	private boolean running = false;
+
+	private boolean output;
+
+	private Integer sendCounter = 0;
+
+	private Map<String, Integer> recievedCounter;
+
+	public MomController(List<List<Room>> rooms, String ownName, int sleepTime,
+			boolean output, int listenerCount) {
 		this.readingQueueThreads = new HashMap<String, MomController.ReadingQueueThread>();
 
 		this.ownName = ownName;
@@ -31,37 +42,62 @@ public class MomController extends Thread {
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}
-//		ReadingQueueThread thread = new ReadingQueueThread("critical",
-//				momHandler);
-//		thread.start();
-//		readingQueueThreads.put("critical", thread);
 
-//		thread = new ReadingQueueThread(ownName, momHandler);
-//		thread.start();
-//		readingQueueThreads.put(ownName, thread);
-		
-//		thread = new ReadingQueueThread("house0", momHandler);
-//		thread.start();
-//		readingQueueThreads.put(ownName, thread);
+		this.output = output;
+
+		this.sleepTime = sleepTime;
+
+		this.recievedCounter = new HashMap<String, Integer>();
+
+		for (int i = 0; i < listenerCount; i++) {
+			recievedCounter.put(String.valueOf(i), 0);
+		}
+
+		// ReadingQueueThread thread = new ReadingQueueThread("critical",
+		// momHandler);
+		// thread.start();
+		// readingQueueThreads.put("critical", thread);
+
+		// thread = new ReadingQueueThread(ownName, momHandler);
+		// thread.start();
+		// readingQueueThreads.put(ownName, thread);
+
+		// thread = new ReadingQueueThread("house0", momHandler);
+		// thread.start();
+		// readingQueueThreads.put(ownName, thread);
 
 	}
 
 	@Override
 	public void run() {
 		super.run();
-		while (true) {
+		running = true;
+		while (running) {
 			sendValues();
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
+	public void stopThread() {
+		for (Entry<String, ReadingQueueThread> thread : readingQueueThreads
+				.entrySet()) {
+			thread.getValue().stopThread();
+			try {
+				thread.getValue().join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		this.running = false;
+	}
+
 	private void sendValues() {
 		// iterate over lists
-//		boolean isCritical = false;
+		// boolean isCritical = false;
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < rooms.size(); i++) {
 			List<Room> currList = rooms.get(i);
@@ -87,7 +123,7 @@ public class MomController extends Thread {
 			}
 
 			if (highestTemp > 30) {
-//				isCritical = true;
+				// isCritical = true;
 			}
 
 			builder.append("HighestTemp of House No. " + i + " :\t"
@@ -98,10 +134,13 @@ public class MomController extends Thread {
 					+ "\n");
 		}
 		try {
-//			if (isCritical) {
-//				momHandler.sendToQueue("critical", builder.toString());
-//			}
+			// if (isCritical) {
+			// momHandler.sendToQueue("critical", builder.toString());
+			// }
 			momHandler.sendToQueue(ownName, builder.toString());
+			synchronized (sendCounter) {
+				sendCounter++;
+			}
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}
@@ -113,7 +152,7 @@ public class MomController extends Thread {
 		private MomHandler momHandler;
 
 		private boolean running;
-		
+
 		public ReadingQueueThread(String queue, MomHandler momHandler) {
 			this.queue = queue;
 			this.momHandler = momHandler;
@@ -126,31 +165,64 @@ public class MomController extends Thread {
 			while (running) {
 				try {
 					String text = momHandler.recieveFromQueue(queue);
-					OutputInputHandler.write(text);
+					if (!text.equals("")) {
+						synchronized (recievedCounter) {
+							recievedCounter.put(queue,
+									recievedCounter.get(queue) + 1);
+						}
+					}
+					if (output && !text.equals("")) {
+						OutputInputHandler.write(text);
+					}
+					Thread.sleep(sleepTime);
 				} catch (JMSException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		
+
 		public void stopThread() {
 			running = false;
 		}
 	}
-	
+
 	public void deleteQueue(String queue) {
-		for (Entry<String, ReadingQueueThread> entry : readingQueueThreads.entrySet()) {
+		for (Entry<String, ReadingQueueThread> entry : readingQueueThreads
+				.entrySet()) {
 			if (entry.getKey().equals(queue)) {
 				entry.getValue().stopThread();
+				try {
+					entry.getValue().join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				readingQueueThreads.remove(entry.getKey());
 				return;
 			}
 		}
 	}
-	
+
 	public void addQueue(String queue) {
 		ReadingQueueThread thread = new ReadingQueueThread(queue, momHandler);
 		thread.start();
 		readingQueueThreads.put(ownName, thread);
+	}
+
+	public int getSendCounter() {
+		int counter = -1;
+		synchronized (sendCounter) {
+			counter = sendCounter;
+		}
+		return counter;
+	}
+
+	public int getRecievedCounter(String queue) {
+		int counter = -1;
+		synchronized (recievedCounter) {
+			counter = recievedCounter.get(queue);
+		}
+		return counter;
 	}
 }
